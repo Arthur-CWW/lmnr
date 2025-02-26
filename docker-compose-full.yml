@@ -42,6 +42,9 @@ services:
       nofile:
         soft: 262144
         hard: 262144
+    environment:
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
 
   semantic-search-service:
     image: ghcr.io/lmnr-ai/semantic-search-service
@@ -61,7 +64,7 @@ services:
   postgres:
     image: postgres:16
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-data-lmnr-full:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -71,6 +74,8 @@ services:
       interval: 2s
       timeout: 5s
       retries: 5
+    ports:
+      - "5433:5432"
 
   app-server:
     image: ghcr.io/lmnr-ai/app-server
@@ -95,6 +100,7 @@ services:
       - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/%2f
       - CLICKHOUSE_URL=http://clickhouse:8123
       - CLICKHOUSE_USER=${CLICKHOUSE_USER}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
       - CODE_EXECUTOR_URL=http://python-executor:8811
       - SHARED_SECRET_TOKEN=${SHARED_SECRET_TOKEN}
       - ENVIRONMENT=FULL
@@ -120,9 +126,10 @@ services:
       - ENVIRONMENT=FULL
       - CLICKHOUSE_URL=http://clickhouse:8123
       - CLICKHOUSE_USER=${CLICKHOUSE_USER}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
 
 volumes:
   qdrant-data:
   clickhouse-data:
   clickhouse-logs:
-  postgres-data:
+  postgres-data-lmnr-full:
